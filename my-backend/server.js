@@ -1,19 +1,54 @@
 const express=require('express');
 const request=require('request');
-app=express()
-const port=3001;
+const mongoose=require('mongoose');
+const cookieParser=require('cookie-parser');
+const bcrypt = require("bcryptjs");
+const passport=require('passport');
+const passportLocal=require('passport-local').Strategy;
+const session=require('express-session');
+const bodyParser=require('body-parser');
+const cors=require('cors');
 
-app.get('/getWeather',async(req,res)=>{
-    await request(`http://api.weatherstack.com/current?access_key=1414104df659b5fdf4fbd30229f7b970&query=New York`,
-    function(error,response,body){
-        if(!error && response.statusCode==200){
-            let parsedBody=JSON.parse(body);
-            console.log(parsedBody.current.temperature);
-            res.send(parsedBody);
-        }else{
-            console.log(error)
-        }
+const {User}= require('./schemaDefinition');
+
+app=express()
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+const port=3001;
+app.use(
+    cors({
+      origin: "http://localhost:3000", // <-- location of the react app were connecting to
+      credentials: true,
     })
+  );
+  app.use(
+    session({
+      secret: "secretcode",
+      resave: true,
+      saveUninitialized: true,
+    })
+  );
+  app.use(cookieParser("secretcode"));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  //require("./passportConfig")(passport);
+
+
+mongoose.connect('mongodb://localhost:27017/users',{useNewUrlParser:true, useUnifiedTopology:true}).then(()=>{console.log("Connection open!")}).catch(err=>{console.log(err)});
+
+app.post('/createUser',async (req,res)=>{
+    User.findOne({username:req.body.username}, async (err, doc)=>{
+        if (err) throw err;
+        if (doc) res.send("User Already Exists");
+        if(!doc){
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            const newUser=new User({username:req.body.username,password:hashedPassword});
+    await newUser.save();
+    console.log("User inserted in ur mother");
+        }
+       
+    })
+    
 })
 
 app.get('/',(req,res)=>
