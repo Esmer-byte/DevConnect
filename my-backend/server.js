@@ -1,110 +1,195 @@
-const express=require('express');
-const request=require('request');
-const mongoose=require('mongoose');
-const cookieParser=require('cookie-parser');
-const bcrypt = require("bcryptjs");
-const passport=require('passport');
-const passportLocal=require('passport-local').Strategy;
-const session=require('express-session');
-const MongoDBSession=require('connect-mongodb-session')(session);
-const cors=require('cors');
-const {User} = require('./schemaDefinition');
-require('./passportConfig')(passport);
-app=express()
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-const port=3001;
-mongoURI="mongodb://localhost:27017/users"
-app.use(
-    cors({
-      origin: "http://localhost:3000", // <-- location of the react app were connecting to
-      credentials: true,
-    })
-  );
+//Start of requirements
+const express = require("express");
+const request = require("request");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const passportLocal = require("passport-local").Strategy;
+const session = require("express-session");
+const MongoDBSession = require("connect-mongodb-session")(session);
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const passport = require("passport");
+const { User,Postare } = require("./schemaDefinition");
+//End of requirements
 
-  const store= new MongoDBSession({
-     uri:mongoURI,
-     collection:'mySessions'
+//Global variables
+app = express();
+const port = 3001; // <- Application port
+const mongoURI = "mongodb://localhost:27017/users"; // <- Database location
+//================================================================END OF GLOBAL=========================================================================================//
+
+//MIDDLEWARE
+require("./passportConfig")(passport);
+const store = new MongoDBSession({
+  uri: mongoURI,
+  collection: "mySessions",
+});
+
+//Establish connection with the Database
+mongoose
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true, //the MongoDB driver will try to find a server to send any given operation to, and keep retrying for serverSelectionTimeoutMS milliseconds.
   })
-  app.use(
-    session({
-      name:"USERCOOKIE",
-      secret: "secretcode",
-      resave: false,
-      saveUninitialized: false,
-      store:store,
-      cookie:{
-        maxAge: 1000 * 60 * 60 * 3,
-        sameSite: false,
-        secure: false
-      }
-    })
-  );
-  app.use(cookieParser("secretcode"));
-  app.use(passport.initialize());
-  app.use(passport.session());
-  require("./passportConfig")(passport);
+  .then(() => {
+    console.log("Connection open!");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+// End of establish connection with the Database
 
+// Cookie Settings
+app.use(
+  session({
+    name: "USERCOOKIE", //name to be put in "key" field in postman etc
+    secret: "secretcode", //secret that will be checked for authorization
+    resave: false,
+    saveUninitialized: false, //https://stackoverflow.com/questions/40381401
+    store: store,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 3,
+      sameSite: false, //The SameSite attribute of the Set-Cookie HTTP response header allows you to declare if your cookie should be restricted to a first-party or same-site context.
+      secure: false,
+    },
+  })
+);
+app.use(cookieParser("secretcode"));
+// End of Cookie Settings
 
+app.use(express.json()); //Express settings
+app.use(express.urlencoded({ extended: true })); //Express settings
 
-mongoose.connect(mongoURI,{useNewUrlParser:true, useUnifiedTopology:true}).then(()=>{console.log("Connection open!")}).catch(err=>{console.log(err)});
+app.use(
+  cors({
+    origin: "http://localhost:3000", // <-- location of the react app were connecting to
+    credentials: true,
+  })
+); // Cors Settings
 
-app.post('/createUser',async (req,res)=>{
-    User.findOne({username:req.body.username}, async (err, doc)=>{
+app.use(passport.initialize()); // Passport settings
+app.use(passport.session()); // Passport settings
+
+function Authentication(sessUser) {
+  if (sessUser) {
+    return true;
+  } else {
+    return false;
+  }
+}
+//---------------------------------------------------------------END OF MIDDLEWARE---------------------------------------------------------------------//
+
+//Routes
+
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) throw err;
+    if (!user) res.send("No user exists");
+    else {
+      req.logIn(user, (err) => {
         if (err) throw err;
-        if (doc) res.send("User Already Exists");
-        if(!doc){
-            const hashedPassword = await bcrypt.hash(req.body.password, 10);
-            const newUser=new User({username:req.body.username,password:hashedPassword});
-    await newUser.save();
-    console.log("User inserted in ur mother");
-        }
-       
-    })
-    res.redirect('/login');
-})
+        console.log(req.user);
+        //Session authentication
+        const sessUser = { id: user.id, username: user.username, email:user.email, date:user.date };
+        req.session.user = sessUser; // Auto saves session data in mongo store
+        res.send({ msg: "User susccessfully logged in", sessUser });
+        //End of session authentication
+      });
+    }
+  })(req, res, next);
+}); // Route for Login
 
-app.post('/login',(req,res,next)=>{
-    passport.authenticate('local',(err,user,info)=>{
-      if(err) throw err;
-      if(!user) res.send("No user exists");
-      else{
-        req.logIn(user,err=>{
-          if(err) throw err;
-          //console.log(user);
-          const usersession={username:user.username,id:user.id};
-          req.session.user=usersession;
-          console.log(req.session.user);
-          res.send({msg:"User susccessfully logged in", usersession})
-        })
-      }
-    })(req,res,next)
-})
-
-app.get('/user',(req,res)=>{
-
-})
-
-app.delete("/logout", (req, res) => {
+app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     //delete session data from store, using sessionID in cookie
     if (err) throw err;
     res.clearCookie("USERCOOKIE"); // clears cookie containing expired sessionID
     res.send("Logged out successfully");
   });
-});
+}); //Logout
 
-app.get("/authchecker", (req, res) => {
-  
-});
-
-app.get('/',async (req,res)=>{
-  const sessUser = req.session.user;
-  if (sessUser) {
-    return res.json({ msg: " Authenticated Successfully", sessUser });
-  } else {
-    return res.status(401).json({ msg: "Unauthorized" });
+//User registration route
+app.post("/createUser", (req, res) => {
+  User.findOne({ username: req.body.username }, async (err, doc) => {
+    if (err) throw err;
+    if (doc) res.send("User Already Exists");
+    if (!doc) {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10); //password encryption
+      const newUser = new User({
+        username: req.body.username, //taking the username that has been introduced in the frontend form
+        password: hashedPassword,
+        email:req.body.email,
+        role:"user",
+        date:req.body.date
+      });
+      await newUser.save(); //introducing the user into the database
+      res.send("User Created");
+    }
+  });
+}); //User registration route
+app.get("/getUser", async (req, res) => {
+  if (Authentication(req.session.user)) {
+    const user = await User.findById(req.session.user.id);
+    res.json({ username: user.username, id: user.id });
   }
 });
 
-app.listen(port,()=>console.log(`Example running on port ${port}`));
+app.get("/deleteUser", async (req, res) => {
+  const id = req.session.user.id;
+
+  console.log("am facut logout")
+  //delete session data from store, using sessionID in cookie
+  User.findOneAndRemove({_id:id}, function (err, result) {
+    if (err) throw err;
+    req.session.destroy();
+    res.clearCookie("USERCOOKIE");
+    res.redirect("/");
+  });
+})
+
+app.put('/updateUser',async (req,res)=>{
+  const pass=req.body.oldpassword;
+  const userToUpdate=await User.findOne({_id:req.session.user.id});
+  bcrypt.compare(pass, userToUpdate.password, async (err, result) => {
+    var Result= result;
+    if (err) throw err;
+    if (Result === true) {
+    const hashedPassword = await bcrypt.hash(req.body.newpassword, 10);
+    await User.findByIdAndUpdate({_id:req.session.user.id},{password:hashedPassword});
+    req.session.destroy();
+    res.send("Password was changed successfully");
+    } else {
+      res.send("Old passwords do not match! Please fuck off");
+    }
+  });
+});
+
+app.get("/createPost",async(req, res, next) => {
+  const date = new Date();
+  const postare= new Postare({
+    ownerID:"61b1f3e36abec5f39f7ee46c",
+   previewURL: "",
+   descriptionBody:"Salutare am un cal",
+   reactions:{
+       likes:["61b1f3e36abec5f39f7ee46c", "61b1f3e36abec5f39f7ee46c"],
+       hearts:["61b1f3e36abec5f39f7ee46c", "61b1f3e36abec5f39f7ee46c"],
+       wows:["61b1f3e36abec5f39f7ee46c", "61b1f3e36abec5f39f7ee46c"],
+   },
+   date: date
+ })
+  await postare.save();
+  res.send("post created");
+})
+
+//Protected Home page
+app.get("/", async (req, res) => {
+  if (Authentication(req.session.user)) {
+    res.json({ msg: "Logat", user: req.session.user });
+  } else {
+    res.send("Ne-Logat");
+  }
+}); //Protected Home page
+
+app.listen(port, () => console.log(`Example running on port ${port}`));
+//----------------------------------------------------------------End of Routes----------------------------------------------------------------

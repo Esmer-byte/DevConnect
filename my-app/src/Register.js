@@ -1,55 +1,80 @@
-import React, { Component, useState } from "react";
-import axios from "axios";
+import Axios from "axios";
+import React, { useState } from "react";
 
-import {Button} from 'react-bootstrap';
-
+import { Button } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
+ 
 function Register() {
   const [enteredUsername, setEnteredUsername] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
+  const [enteredEmail, setEnteredEmail] = useState("");
+  const [enteredDate, setEnteredDate] = useState("");
+ 
+  const [ok, setOk] = useState("");
+ 
+  function handleSubmit(event) {
+    event.preventDefault();
+    Axios({
+      method: "POST",
+      data: {
+        username: enteredUsername,
+        password: enteredPassword,
+        email: enteredEmail,
+        date: enteredDate,
+      },
+      withCredentials: true,
+      url: "http://localhost:3000/createUser",
+    }).then((res) => {setOk(<div><Redirect to="/login" /></div>)});
+  } //Sending the data to the backend for verification and encryption.
+ 
+ 
   function usernameHandler(event) {
     setEnteredUsername(event.target.value);
   }
   function passwordHandler(event) {
     setEnteredPassword(event.target.value);
   }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    const formData = {
-      username: enteredUsername,
-      password: enteredPassword,
-    };
-    console.log(formData);
-    axios
-      .post(
-        "/createUser",
-        { username: formData.username, password: formData.password },
-        { withCredentials: true }
-      ).then((response)=>console.log(response))
-      .catch((err) => console.error(err));
+  function emailHandler(event) {
+    setEnteredEmail(event.target.value);
   }
-
+  function dateHandler(event) {
+    setEnteredDate(event.target.value);
+  }//Handlers for data input
+ 
+ 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h1>Register</h1>
-        <input
-          type="text"
-          onChange={usernameHandler}
-          value={enteredUsername}
-          placeholder="username"
-        ></input>
-        <input
-          type="password"
-          onChange={passwordHandler}
-          value={enteredPassword}
-          placeholder="password"
-        ></input>
-        <Button variant="primary" type="submit">submit</Button>
-        
-      </form>
-    </div>
+    <form id="regiter" onSubmit={handleSubmit}>
+      <input
+        type="text"
+        onChange={usernameHandler}
+        value={enteredUsername}
+        placeholder="username"
+      ></input>
+      <input
+        type="password"
+        onChange={passwordHandler}
+        value={enteredPassword}
+        placeholder="password"
+      ></input>
+      <input
+        type="email"
+        onChange={emailHandler}
+        value={enteredEmail}
+        placeholder="Email"
+      ></input>
+      <input
+        type="date"
+        onChange={dateHandler}
+        value={enteredDate}
+        placeholder="Email"
+      ></input>
+      <Button variant="primary" type="submit">
+        submit
+      </Button>
+      {ok}
+    </form>
+   
   );
-}
-
+}//Registration form
+ 
 export default Register;
