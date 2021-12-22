@@ -148,6 +148,7 @@ app.get("/deleteUser", async (req, res) => {
   });
 })
 //new comment
+//omer commit
 app.put('/updateUser',async (req,res)=>{
   const pass=req.body.oldpassword;
   const userToUpdate=await User.findOne({_id:req.session.user.id});
