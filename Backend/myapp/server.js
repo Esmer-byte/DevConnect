@@ -212,14 +212,16 @@ app.put("/updatePost", async (req, res, next) => {
         })
       break;
     case 2:
-      Postare.findOneAndUpdate({ownerID:req.body.postOwner}, {
-        $push: { reactions: { hearts: req.body.owner } },
-      });
+      await Postare.findOneAndUpdate(
+        { ownerID: req.body.postOwner }, 
+        {$push:{ "hearts":{"items":req.body.owner}}
+        })
       break;
     case 3:
-      Postare.findOneAndUpdate({ownerID:req.body.postOwner}, {
-        $push: { reactions: { wows: req.body.owner } },
-      });
+      await Postare.findOneAndUpdate(
+        { ownerID: req.body.postOwner }, 
+        {$push:{ "wows":{"items":req.body.owner}}
+        })
       break;
   }
 
