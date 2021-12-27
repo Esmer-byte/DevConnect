@@ -202,12 +202,14 @@ app.post("/createPost", async (req, res, next) => {
 
 //Update Post
 app.put("/updatePost", async (req, res, next) => {
-  console.log(req.body);
+  console.log(req.body.reaction);
+  console.log(req.body.postOwner);
   switch (req.body.reaction) {
     case 1:
-      Postare.findOneAndUpdate({ownerID:req.body.postOwner}, {
-        $push: { reactions: { likes: req.body.owner } },
-      });
+      await Postare.findOneAndUpdate(
+        { ownerID: req.body.postOwner }, 
+        {$push:{ "likes":{"items":req.body.owner}}
+        })
       break;
     case 2:
       Postare.findOneAndUpdate({ownerID:req.body.postOwner}, {
