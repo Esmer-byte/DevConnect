@@ -28,6 +28,7 @@ function Post(props) {
         postOwner: props.owner,
         owner: props.currentUser,
         reaction: reaction,
+        postID: props.number
       },
       withCredentials: true,
       url: "http://localhost:3000/updatePost",

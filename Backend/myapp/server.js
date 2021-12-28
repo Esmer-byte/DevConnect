@@ -202,29 +202,43 @@ app.post("/createPost", async (req, res, next) => {
 
 //Update Post
 app.put("/updatePost", async (req, res, next) => {
-  console.log(req.body.reaction);
-  console.log(req.body.postOwner);
-  switch (req.body.reaction) {
-    case 1:
-      await Postare.findOneAndUpdate(
-        { ownerID: req.body.postOwner }, 
-        {$push:{ "likes":{"items":req.body.owner}}
-        })
-      break;
-    case 2:
-      await Postare.findOneAndUpdate(
-        { ownerID: req.body.postOwner }, 
-        {$push:{ "hearts":{"items":req.body.owner}}
-        })
-      break;
-    case 3:
-      await Postare.findOneAndUpdate(
-        { ownerID: req.body.postOwner }, 
-        {$push:{ "wows":{"items":req.body.owner}}
-        })
-      break;
+  let ok = true;
+  const reactionChecker = await Postare.find({
+    _id: req.body.postID,
+    $or: [
+      { likes: { items: req.body.owner } },
+      { hearts: { items: req.body.owner } },
+      { wows: { items: req.body.owner } },
+    ],
+  });
+  let reactionArray = [];
+  reactionArray = reactionChecker[0].likes;
+  if (reactionArray.indexOf(req.body.owner) == -1) {
+    ok = false;
   }
 
+  if (ok) {
+    switch (req.body.reaction) {
+      case 1:
+        await Postare.findOneAndUpdate(
+          { _id: req.body.postID },
+          { $push: { likes: { items: req.body.owner } } }
+        );
+        break;
+      case 2:
+        await Postare.findOneAndUpdate(
+          { _id: req.body.postID },
+          { $push: { hearts: { items: req.body.owner } } }
+        );
+        break;
+      case 3:
+        await Postare.findOneAndUpdate(
+          { _id: req.body.postID },
+          { $push: { wows: { items: req.body.owner } } }
+        );
+        break;
+    }
+  }
 });
 
 //Get Posts Route
