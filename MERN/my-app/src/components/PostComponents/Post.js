@@ -5,9 +5,11 @@ import { useState } from "react";
 import "./Post.css";
 
 function Post(props) {
+  
   const [likes, setLike] = useState(props.likes.length)
   const [hearts, setHearts] = useState(props.hearts.length)
   const [wows, setWows] = useState(props.wows.length)
+  const [checkedHearts,setCheckedHearts]= useState(false);
   function postReactionLike() {
     setLike(props.likes.length + 1)
     postReaction(1);
@@ -20,6 +22,7 @@ function Post(props) {
     setWows(props.wows.length + 1)
     postReaction(3);
   }
+
   function postReaction(reaction) {
     
     Axios({
@@ -33,8 +36,7 @@ function Post(props) {
       withCredentials: true,
       url: "http://localhost:3000/updatePost",
     });
-  }
-  return (
+  }return(
     <div id={props.number}>
       <Card id="customCard" style={{ width: "40rem" }}>
         <Card.Title>This post was created by {props.owner}</Card.Title>

@@ -53,16 +53,14 @@ const postSchema=new mongoose.Schema({
       type:String,
   },
       likes:{
-          type:Array,
-          items:{type:String}
+          type:[String]
       },
       hearts:{
-          type:Array,
-          items:{type:String}
+          type:[String]
+
       },
       wows:{
-          type:Array,
-          items:{type:String}
+          type:[String]
   },
   date:{
     type:Date,
