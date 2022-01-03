@@ -203,7 +203,7 @@ app.post("/createPost", async (req, res, next) => {
 //Update Post
 app.put("/updatePost", async (req, res, next) => {
   let ok = true;
-  const reactionChecker = await Postare.find({
+  const reactionChecker = await Postare.findOne({
     _id: req.body.postID,
     $or: [
       { likes: req.body.owner },
@@ -211,13 +211,20 @@ app.put("/updatePost", async (req, res, next) => {
       { wows: req.body.owner },
     ],
   });
-  console.log(reactionChecker[0]);
-  //console.log(reactionChecker[0].likes.indexOf(req.body.owner));
-  // if (reactionChecker[0].likes.indexOf(req.body.owner) == 0) {
-  //   ok = false;
-  // }
 
-  if (ok) {
+  if(reactionChecker != null) {
+  if (reactionChecker.likes.indexOf(req.body.owner) > -1) {
+    ok = false;
+  }
+  if (reactionChecker.wows.indexOf(req.body.owner) > -1) {
+    ok = false;
+  }
+  if (reactionChecker.hearts.indexOf(req.body.owner) > -1) {
+    ok = false;
+  }
+}
+
+  if (ok == true) {
     switch (req.body.reaction) {
       case 1:
         await Postare.findOneAndUpdate(
