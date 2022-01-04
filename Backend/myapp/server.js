@@ -224,7 +224,7 @@ app.put("/updatePost", async (req, res, next) => {
   }
 }
 
-  if (ok == true) {
+  if (ok) {
     switch (req.body.reaction) {
       case 1:
         await Postare.findOneAndUpdate(
