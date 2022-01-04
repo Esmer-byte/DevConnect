@@ -186,8 +186,9 @@ app.get("/getUser", async (req, res) => {
 app.post("/createPost", async (req, res, next) => {
   const date = new Date();
   const postare = new Postare({
-    ownerID: req.session.user.username,
+    ownerID: req.session.user.id,
     previewURL: "",
+    displayName: req.session.user.username,
     descriptionBody: req.body.description,
     reactions: {
       likes: [],
@@ -270,17 +271,22 @@ app.put("/updatePost", async (req, res, next) => {
 });
 
 app.post('/deletePost',async (req,res)=>{
-  console.log(req.body.postID);
-  const id = req.body.postID;
-  Postare.findOneAndRemove({ _id: id }, function (err, result) {
+  const deleteId = req.body.postID;
+  const {ownerID}=await Postare.findOne({_id:deleteId});
+  if(ownerID==req.session.user.id){
+  Postare.findOneAndRemove({ _id: deleteId }, function (err, result) {
     if (err) throw err;
     res.redirect("/");
   });
+}else{
+  res.status(403).send("Not your post");
+}
 })
 
 //Get Posts Route
 app.get("/getPosts", async (req, res) => {
   const posts = await Postare.find();
+  console.log(posts);
   res.status(200).send(posts);
 });
 //================================================================END OF POST ROUTES===================================================================

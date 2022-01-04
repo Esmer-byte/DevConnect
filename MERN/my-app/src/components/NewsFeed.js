@@ -28,7 +28,7 @@ function NewsFeed(props) {
           hearts={posts.hearts}
           likes={posts.likes}
           wows={posts.wows}
-          owner={posts.ownerID}
+          owner={posts.displayName}
           description={posts.descriptionBody}
         />
       ))}

@@ -49,6 +49,10 @@ const postSchema=new mongoose.Schema({
   previewURL:{
       type:String,
   },
+  displayName:{
+      type:String,
+      required:true,
+  },
   descriptionBody:{
       type:String,
   },
