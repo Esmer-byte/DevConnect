@@ -9,7 +9,6 @@ function Post(props) {
   const [likes, setLike] = useState(props.likes.length)
   const [hearts, setHearts] = useState(props.hearts.length)
   const [wows, setWows] = useState(props.wows.length)
-  const [checkedHearts,setCheckedHearts]= useState(false);
   function postReactionLike() {
     setLike(props.likes.length + 1)
     postReaction(1);

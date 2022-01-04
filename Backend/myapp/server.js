@@ -245,6 +245,27 @@ app.put("/updatePost", async (req, res, next) => {
         );
         break;
     }
+  }else{
+    switch (req.body.reaction) {
+      case 1:
+        await Postare.findOneAndUpdate(
+          { _id: req.body.postID },
+          { $pull: { likes: req.body.owner } }
+        );
+        break;
+      case 2:
+        await Postare.findOneAndUpdate(
+          { _id: req.body.postID },
+          { $pull: { hearts: req.body.owner } }
+        );
+        break;
+      case 3:
+        await Postare.findOneAndUpdate(
+          { _id: req.body.postID },
+          { $pull: { wows: req.body.owner } }
+        );
+        break;
+    }
   }
 });
 
