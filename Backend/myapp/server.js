@@ -212,17 +212,17 @@ app.put("/updatePost", async (req, res, next) => {
     ],
   });
 
-  if(reactionChecker != null) {
-  if (reactionChecker.likes.indexOf(req.body.owner) > -1) {
-    ok = false;
+  if (reactionChecker != null) {
+    if (reactionChecker.likes.indexOf(req.body.owner) > -1) {
+      ok = false;
+    }
+    if (reactionChecker.wows.indexOf(req.body.owner) > -1) {
+      ok = false;
+    }
+    if (reactionChecker.hearts.indexOf(req.body.owner) > -1) {
+      ok = false;
+    }
   }
-  if (reactionChecker.wows.indexOf(req.body.owner) > -1) {
-    ok = false;
-  }
-  if (reactionChecker.hearts.indexOf(req.body.owner) > -1) {
-    ok = false;
-  }
-}
 
   if (ok) {
     switch (req.body.reaction) {
@@ -245,7 +245,7 @@ app.put("/updatePost", async (req, res, next) => {
         );
         break;
     }
-  }else{
+  } else {
     switch (req.body.reaction) {
       case 1:
         await Postare.findOneAndUpdate(
@@ -268,6 +268,15 @@ app.put("/updatePost", async (req, res, next) => {
     }
   }
 });
+
+app.post('/deletePost',async (req,res)=>{
+  console.log(req.body.postID);
+  const id = req.body.postID;
+  Postare.findOneAndRemove({ _id: id }, function (err, result) {
+    if (err) throw err;
+    res.redirect("/");
+  });
+})
 
 //Get Posts Route
 app.get("/getPosts", async (req, res) => {
