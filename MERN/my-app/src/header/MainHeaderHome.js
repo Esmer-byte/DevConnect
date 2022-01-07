@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-
-function MainHeaderHome() {
+import {Button} from "react-bootstrap"
+function MainHomeHeader() {
   return (
     <div>
-      
-        <Link to="/"></Link>
-      
+      <Button  variant = "info" bsPrefix="super-btn">
+        <Link to="/">Home</Link>
+      </Button>
     </div>
   );
 }
 
-export default MainHeaderHome;
+export default MainHomeHeader;

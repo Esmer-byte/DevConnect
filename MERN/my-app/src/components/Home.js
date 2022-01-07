@@ -36,7 +36,7 @@ function Home() {
       {ok}
       <MakeNewPost/>
       <NewsFeed user = {user} />
-      <MainHeaderHome />
+      
     </div>
   );
 }

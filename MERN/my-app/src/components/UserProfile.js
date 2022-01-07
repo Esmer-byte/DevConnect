@@ -6,6 +6,7 @@ import { Card, Button } from "react-bootstrap";
 import Harold from "../Images/Harold.jpg";
 import MainUpdateHeader from "../header/MainUpdateHeader";
 import "./test.css";
+import MainHeaderHome from "../header/MainHeaderHome";
 function Profile() {
   const [ok, setOK] = useState("<div>Not authorized</div>");
   function doLogout() {
@@ -51,6 +52,7 @@ function Profile() {
                   Delete account
                 </Button>
                 <MainUpdateHeader></MainUpdateHeader>
+                <MainHeaderHome></MainHeaderHome>
               </Card.Body>
             </Card>
           </div>
