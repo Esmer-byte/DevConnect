@@ -22,6 +22,7 @@ function NewsFeed(props) {
       {newsFeed.map((posts) => (
         
         <Post
+          username = {props.userName}
           currentUser = {props.user}
           key={newsFeed.indexOf(posts)}
           number={posts._id}

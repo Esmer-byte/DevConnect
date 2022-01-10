@@ -1,6 +1,6 @@
 import { Card, Button, Col, Row, Form, FloatingLabel } from "react-bootstrap";
 import Axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import "./Post.css";
 
@@ -10,6 +10,7 @@ function Post(props) {
   const [wows, setWows] = useState(props.wows.length);
   const [isCommenting, setCommenting] = useState(false);
   const [commentValue, setCommentValue] = useState();
+  const [comments, setComments] = useState([]);
 
   //Frontend functions
 
@@ -59,18 +60,34 @@ function Post(props) {
     });
   }
   function postComment(event) {
-      event.preventDefault();
-      Axios({
-        method: "POST",
-        data: {
-          text: commentValue,
-          postID: props.number,
-        },
-        withCredentials: true,
-        url: "http://localhost:3000/commentPost",
-      });
-      
+    Axios({
+      method: "POST",
+      data: {
+        text: commentValue,
+        postID: props.number,
+        owner: props.username,
+
+      },
+      withCredentials: true,
+      url: "http://localhost:3000/commentPost",
+    }).then(console.log(props.username + "asd"));
   }
+  function getComment() {
+    Axios({
+      method: "POST",
+      withCredentials: true,
+      data: {
+        postID: props.number,
+      },
+      url: "http://localhost:3000/getComment",
+    }).then((res) => {
+      setComments(res.data);
+      console.log(comments);
+    });
+  }
+  useEffect(() => {
+    getComment();
+  }, []);
   //End of Backend Functions
   return (
     <div id={props.number}>
@@ -107,8 +124,19 @@ function Post(props) {
                 onClick={toggleComment}
                 className="justify-content-end"
                 variant="info"
+                size="sm"
               >
-                <i class="las la-plus-square"></i>
+                <i className="las la-plus-square"></i>
+              </Button>
+            </Col>
+            <Col md="auto">
+              <Button
+                onClick={getComment}
+                className="justify-content-end"
+                variant="info"
+                size="sm"
+              >
+                See all comments
               </Button>
             </Col>
           </Row>
@@ -116,13 +144,23 @@ function Post(props) {
         {isCommenting && (
           <div>
             <Form onSubmit={postComment}>
-              <Form.Control onChange = {changeComment} value = {commentValue} as="textarea" placeholder="Leave a comment here" />
-              <Button  type="submit" variant="success">
+              <Form.Control
+                onChange={changeComment}
+                value={commentValue}
+                as="textarea"
+                placeholder="Leave a comment here"
+              />
+              <Button type="submit" variant="success">
                 Submit
               </Button>
             </Form>
           </div>
         )}
+        <Card.Footer>
+          {comments.map((index) => (
+            <div>{index.ownerID} has added a comment: {index.commentContent}</div>
+          ))}
+        </Card.Footer>
       </Card>
     </div>
   );

@@ -10,7 +10,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
-const { User, Postare } = require("./schemadefinition");
+const { User, Postare, Comment } = require("./schemadefinition");
 //End of requirements
 
 //Global variables
@@ -292,11 +292,24 @@ app.get("/getPosts", async (req, res) => {
 
 //Post Comment Route
 app.post("/commentPost", async (req, res) => {
-   
-   console.log(req.body.text);
-   console.log(req.session.user.id);
-   console.log(req.body.postID);
+   console.log(req.body.owner);
+   const comment = new Comment({
+      ownerID: req.session.user.id,
+      postID: req.body.postID,
+      commentContent: req.body.text,
+   })
+   await comment.save();
+   console.log(comment);
+   res.send("comment posted");
 })
+//Get Post Comment Route
+app.post("/getComment", async (req, res) => {
+    const PostID = req.body.postID;
+    const comments = await Comment.find({postID: PostID});
+    console.log(comments);
+    res.status(200).send(comments);
+})
+
 //================================================================END OF POST ROUTES===================================================================
 
 //Protected Home page
