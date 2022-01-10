@@ -289,6 +289,14 @@ app.get("/getPosts", async (req, res) => {
   console.log(posts);
   res.status(200).send(posts);
 });
+
+//Post Comment Route
+app.post("/commentPost", async (req, res) => {
+   
+   console.log(req.body.text);
+   console.log(req.session.user.id);
+   console.log(req.body.postID);
+})
 //================================================================END OF POST ROUTES===================================================================
 
 //Protected Home page

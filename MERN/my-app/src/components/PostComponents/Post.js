@@ -1,4 +1,4 @@
-import { Card, Button, Col, Row } from "react-bootstrap";
+import { Card, Button, Col, Row, Form, FloatingLabel } from "react-bootstrap";
 import Axios from "axios";
 import { useState } from "react";
 
@@ -8,6 +8,11 @@ function Post(props) {
   const [likes, setLike] = useState(props.likes.length);
   const [hearts, setHearts] = useState(props.hearts.length);
   const [wows, setWows] = useState(props.wows.length);
+  const [isCommenting, setCommenting] = useState(false);
+  const [commentValue, setCommentValue] = useState();
+
+  //Frontend functions
+
   function postReactionLike() {
     setLike(props.likes.length + 1);
     postReaction(1);
@@ -20,7 +25,16 @@ function Post(props) {
     setWows(props.wows.length + 1);
     postReaction(3);
   }
-  function postDelete(){
+  function toggleComment() {
+    setCommenting(!isCommenting);
+  }
+  function changeComment(event) {
+    setCommentValue(event.target.value);
+  }
+
+  //End of Frontend Functions
+  // Backend Functions
+  function postDelete() {
     Axios({
       method: "POST",
       data: {
@@ -44,6 +58,20 @@ function Post(props) {
       url: "http://localhost:3000/updatePost",
     });
   }
+  function postComment(event) {
+      event.preventDefault();
+      Axios({
+        method: "POST",
+        data: {
+          text: commentValue,
+          postID: props.number,
+        },
+        withCredentials: true,
+        url: "http://localhost:3000/commentPost",
+      });
+      
+  }
+  //End of Backend Functions
   return (
     <div id={props.number}>
       <Card id="customCard" style={{ width: "40rem" }}>
@@ -51,7 +79,11 @@ function Post(props) {
           <Row className="">
             <Col fluid="md-10">This post was created by {props.owner} </Col>
             <Col md="auto">
-              <Button className="justify-content-end"  onClick={postDelete} variant="danger">
+              <Button
+                className="justify-content-end"
+                onClick={postDelete}
+                variant="danger"
+              >
                 <i className="las la-trash"></i>
               </Button>
             </Col>
@@ -68,7 +100,29 @@ function Post(props) {
           <Button onClick={postReactionWows} variant="warning">
             <i className="lar la-surprise">{wows}</i>
           </Button>
+          <Row className="">
+            <Col fluid="md-10"></Col>
+            <Col md="auto">
+              <Button
+                onClick={toggleComment}
+                className="justify-content-end"
+                variant="info"
+              >
+                <i class="las la-plus-square"></i>
+              </Button>
+            </Col>
+          </Row>
         </Card.Footer>
+        {isCommenting && (
+          <div>
+            <Form onSubmit={postComment}>
+              <Form.Control onChange = {changeComment} value = {commentValue} as="textarea" placeholder="Leave a comment here" />
+              <Button  type="submit" variant="success">
+                Submit
+              </Button>
+            </Form>
+          </div>
+        )}
       </Card>
     </div>
   );
