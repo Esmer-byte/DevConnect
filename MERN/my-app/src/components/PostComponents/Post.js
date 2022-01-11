@@ -66,12 +66,10 @@ function Post(props) {
       data: {
         text: commentValue,
         postID: props.number,
-        owner: props.username,
-
       },
       withCredentials: true,
       url: "http://localhost:3000/commentPost",
-    }).then(console.log(props.username + "asd"));
+    });
   }
   function getComment() {
     Axios({
@@ -159,9 +157,12 @@ function Post(props) {
           </div>
         )}
         <Card.Footer>
-          {!isShowing && (comments.map((index) => (
-            <div>{index.ownerID} has added a comment: {index.commentContent}</div>
-          )))}
+          {!isShowing &&
+            comments.map((index) => (
+              <div>
+                {index.ownerID} has added a comment: {index.commentContent}
+              </div>
+            ))}
         </Card.Footer>
       </Card>
     </div>

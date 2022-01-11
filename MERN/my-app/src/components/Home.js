@@ -8,7 +8,7 @@ import MakeNewPost from "./PostComponents/makeNewPost";
 function Home() {
   const [ok, setOK] = useState("<div>Not authorized</div>");
   const [user, setUser] = useState("");
-  const [userName, setUsername] = useState();
+
   function setAuth() {
     Axios({
       method: "GET",
@@ -23,7 +23,6 @@ function Home() {
           </div>
         );
         setUser(res.data.user.id);
-        setUsername(res.data.user.username);
       })
       .catch((err) => {
         setOK(<Redirect to="/login" />);
@@ -37,7 +36,7 @@ function Home() {
     <div>
       {ok}
       <MakeNewPost/>
-      <NewsFeed  user = {user, userName} />
+      <NewsFeed  user = {user} />
       
     </div>
   );
