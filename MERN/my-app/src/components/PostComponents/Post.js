@@ -1,7 +1,7 @@
 import { Card, Button, Col, Row, Form, FloatingLabel } from "react-bootstrap";
 import Axios from "axios";
 import { useState, useEffect } from "react";
-
+import getUserService from "../../sevices/getUserService";
 import "./Post.css";
 
 function Post(props) {
@@ -81,7 +81,6 @@ function Post(props) {
       url: "http://localhost:3000/getComment",
     }).then((res) => {
       setComments(res.data);
-      console.log(comments);
     });
     setShowing(!isShowing);
   }
@@ -160,7 +159,7 @@ function Post(props) {
           {!isShowing &&
             comments.map((index) => (
               <div>
-                {index.ownerID} has added a comment: {index.commentContent}
+                {getUserService(index.ownerID)} has added a comment: {index.commentContent}
               </div>
             ))}
         </Card.Footer>
