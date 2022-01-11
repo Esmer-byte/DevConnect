@@ -11,6 +11,7 @@ function Post(props) {
   const [isCommenting, setCommenting] = useState(false);
   const [commentValue, setCommentValue] = useState();
   const [comments, setComments] = useState([]);
+  const [isShowing, setShowing] = useState(false);
 
   //Frontend functions
 
@@ -84,6 +85,7 @@ function Post(props) {
       setComments(res.data);
       console.log(comments);
     });
+    setShowing(!isShowing);
   }
   useEffect(() => {
     getComment();
@@ -157,9 +159,9 @@ function Post(props) {
           </div>
         )}
         <Card.Footer>
-          {comments.map((index) => (
+          {!isShowing && (comments.map((index) => (
             <div>{index.ownerID} has added a comment: {index.commentContent}</div>
-          ))}
+          )))}
         </Card.Footer>
       </Card>
     </div>

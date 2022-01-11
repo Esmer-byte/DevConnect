@@ -286,7 +286,6 @@ app.post('/deletePost',async (req,res)=>{
 //Get Posts Route
 app.get("/getPosts", async (req, res) => {
   const posts = await Postare.find();
-  console.log(posts);
   res.status(200).send(posts);
 });
 
@@ -306,7 +305,6 @@ app.post("/commentPost", async (req, res) => {
 app.post("/getComment", async (req, res) => {
     const PostID = req.body.postID;
     const comments = await Comment.find({postID: PostID});
-    console.log(comments);
     res.status(200).send(comments);
 })
 
