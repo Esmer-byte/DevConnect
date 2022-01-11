@@ -66,6 +66,7 @@ function Post(props) {
       data: {
         text: commentValue,
         postID: props.number,
+        username: props.username,
       },
       withCredentials: true,
       url: "http://localhost:3000/commentPost",
@@ -83,6 +84,16 @@ function Post(props) {
       setComments(res.data);
     });
     setShowing(!isShowing);
+  }
+  function deleteComment() {
+    Axios({
+      method: "POST",
+      data: {
+        postID: props.number,
+      },
+      withCredentials: true,
+      url: "http://localhost:3000/deleteComment",
+    });
   }
   useEffect(() => {
     getComment();
@@ -159,7 +170,16 @@ function Post(props) {
           {!isShowing &&
             comments.map((index) => (
               <div>
-                {getUserService(index.ownerID)} has added a comment: {index.commentContent}
+                <Row>
+                  {index.ownerUsername} has added a comment:{" "}
+                  {index.commentContent}
+                  <Col fluid="md-0"></Col>
+                  <Col>
+                    <Button onClick={deleteComment} variant="danger" size="sm">
+                      <i className="las la-trash"></i>
+                    </Button>
+                  </Col>
+                </Row>
               </div>
             ))}
         </Card.Footer>

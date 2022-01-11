@@ -295,14 +295,14 @@ app.get("/getPosts", async (req, res) => {
 
 //Post Comment Route
 app.post("/commentPost", async (req, res) => {
-   console.log(req.body.owner);
+   console.log(req.body.username);
    const comment = new Comment({
       ownerID: req.session.user.id,
       postID: req.body.postID,
       commentContent: req.body.text,
+      ownerUsername: req.body.username,
    })
    await comment.save();
-   console.log(comment);
    res.send("comment posted");
 })
 //Get Post Comment Route
@@ -310,6 +310,19 @@ app.post("/getComment", async (req, res) => {
     const PostID = req.body.postID;
     const comments = await Comment.find({postID: PostID});
     res.status(200).send(comments);
+})
+//Delete Comment Route
+app.post("/deleteComment", async (req, res) => {
+  const deleteId = req.body._id;
+  const {ownerID}=await Comment.findOne({_id:deleteId});
+  if(ownerID==req.session.user.id){
+  Comment.findOneAndRemove({ _id: deleteId }, function (err, result) {
+    if (err) throw err;
+    res.redirect("/");
+  });
+}else{
+  res.status(403).send("Not your comment");
+}
 })
 
 //================================================================END OF POST ROUTES===================================================================

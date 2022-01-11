@@ -16,13 +16,13 @@ function Home() {
       url: "http://localhost:3000/",
     })
       .then((res) => {
-        console.log(res.data.user);
         setOK(
           <div>
             <h1>Welcome {res.data.user.username}!</h1>
           </div>
         );
-        setUser(res.data.user.id);
+
+        setUser(res.data.user);
       })
       .catch((err) => {
         setOK(<Redirect to="/login" />);
@@ -35,9 +35,8 @@ function Home() {
   return (
     <div>
       {ok}
-      <MakeNewPost/>
-      <NewsFeed  user = {user} />
-      
+      <MakeNewPost />
+      <NewsFeed user={user} />
     </div>
   );
 }
