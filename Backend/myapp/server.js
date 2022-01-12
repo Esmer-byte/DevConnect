@@ -178,10 +178,10 @@ app.get("/getUser", async (req, res) => {
     });
   }
 });
-app.post("/getPublicUser",async (req,res)=>{
-  const foundUser=await User.findById(req.body.userID);
+app.post("/getPublicUser", async (req, res) => {
+  const foundUser = await User.findById(req.body.userID);
   res.json(foundUser);
-})
+});
 //============================================================================END OF USER ROUTES=====================================================================
 
 //============================================================================POST ROUTES============================================================================
@@ -274,18 +274,21 @@ app.put("/updatePost", async (req, res, next) => {
   }
 });
 
-app.post('/deletePost',async (req,res)=>{
+app.post("/deletePost", async (req, res) => {
   const deleteId = req.body.postID;
-  const {ownerID}=await Postare.findOne({_id:deleteId});
-  if(ownerID==req.session.user.id){
-  Postare.findOneAndRemove({ _id: deleteId }, function (err, result) {
-    if (err) throw err;
-    res.redirect("/");
-  });
-}else{
-  res.status(403).send("Not your post");
-}
-})
+  const { ownerID } = await Postare.findOne({ _id: deleteId });
+  if (ownerID == req.session.user.id) {
+    Comment.deleteMany({ postareID: deleteId }, function (err, result) {
+      if (err) throw err;
+    });
+    Postare.findOneAndRemove({ _id: deleteId }, function (err, result) {
+      if (err) throw err;
+      res.redirect("/");
+    });
+  } else {
+    res.status(403).send("Not your post");
+  }
+});
 
 //Get Posts Route
 app.get("/getPosts", async (req, res) => {
@@ -295,35 +298,34 @@ app.get("/getPosts", async (req, res) => {
 
 //Post Comment Route
 app.post("/commentPost", async (req, res) => {
-   console.log(req.body.username);
-   const comment = new Comment({
-      ownerID: req.session.user.id,
-      postID: req.body.postID,
-      commentContent: req.body.text,
-      ownerUsername: req.body.username,
-   })
-   await comment.save();
-   res.send("comment posted");
-})
+  console.log(req.body.username);
+  const comment = new Comment({
+    ownerID: req.session.user.id,
+    postID: req.body.postID,
+    commentContent: req.body.text,
+    ownerUsername: req.body.username,
+  });
+  await comment.save();
+  res.send("comment posted");
+});
 //Get Post Comment Route
 app.post("/getComment", async (req, res) => {
-    const PostID = req.body.postID;
-    const comments = await Comment.find({postID: PostID});
-    res.status(200).send(comments);
-})
+  const PostID = req.body.postID;
+  const comments = await Comment.find({ postID: PostID });
+  res.status(200).send(comments);
+});
 //Delete Comment Route
 app.post("/deleteComment", async (req, res) => {
-  const deleteId = req.body._id;
-  const {ownerID}=await Comment.findOne({_id:deleteId});
-  if(ownerID==req.session.user.id){
-  Comment.findOneAndRemove({ _id: deleteId }, function (err, result) {
-    if (err) throw err;
-    res.redirect("/");
-  });
-}else{
-  res.status(403).send("Not your comment");
-}
-})
+    console.log("Current user: " + req.session.user.id);
+    console.log("Comment owner: " + req.body.owner);
+    console.log("Post owner: " + req.body.postOwner);
+    if(req.session.user.id == req.body.owner || req.session.user.id == req.body.postOwner) {
+    await Comment.findOneAndRemove({_id: req.body.commentID});
+    res.status(200);
+    } else {
+      res.status(403).send("Not your comment");
+    }
+});
 
 //================================================================END OF POST ROUTES===================================================================
 

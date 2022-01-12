@@ -3,6 +3,7 @@ import Axios from "axios";
 import { useState, useEffect } from "react";
 import getUserService from "../../sevices/getUserService";
 import "./Post.css";
+import Comment from "./Comment";
 
 function Post(props) {
   const [likes, setLike] = useState(props.likes.length);
@@ -72,8 +73,8 @@ function Post(props) {
       url: "http://localhost:3000/commentPost",
     });
   }
-  function getComment() {
-    Axios({
+  async function getComment() {
+   await Axios({
       method: "POST",
       withCredentials: true,
       data: {
@@ -85,19 +86,8 @@ function Post(props) {
     });
     setShowing(!isShowing);
   }
-  function deleteComment() {
-    Axios({
-      method: "POST",
-      data: {
-        postID: props.number,
-      },
-      withCredentials: true,
-      url: "http://localhost:3000/deleteComment",
-    });
-  }
-  useEffect(() => {
-    getComment();
-  }, []);
+  
+
   //End of Backend Functions
   return (
     <div id={props.number}>
@@ -167,20 +157,9 @@ function Post(props) {
           </div>
         )}
         <Card.Footer>
-          {!isShowing &&
+          {isShowing &&
             comments.map((index) => (
-              <div>
-                <Row>
-                  {index.ownerUsername} has added a comment:{" "}
-                  {index.commentContent}
-                  <Col fluid="md-0"></Col>
-                  <Col>
-                    <Button onClick={deleteComment} variant="danger" size="sm">
-                      <i className="las la-trash"></i>
-                    </Button>
-                  </Col>
-                </Row>
-              </div>
+              <Comment currentUser = {props.currentUser} postOwner = {props.postOwnerID} comment = {index}></Comment>
             ))}
         </Card.Footer>
       </Card>
