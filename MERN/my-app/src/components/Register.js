@@ -24,10 +24,15 @@ function Register() {
       },
       withCredentials: true,
       url: "http://localhost:3000/createUser",
-    }).then((res) => {setOk(<div><Redirect to="/login" /></div>)});
+    }).then((res) => {
+      setOk(
+        <div>
+          <Redirect to="/login" />
+        </div>
+      );
+    });
   } //Sending the data to the backend for verification and encryption.
 
-  
   function usernameHandler(event) {
     setEnteredUsername(event.target.value);
   }
@@ -39,9 +44,8 @@ function Register() {
   }
   function dateHandler(event) {
     setEnteredDate(event.target.value);
-  }//Handlers for data input
- 
- 
+  } //Handlers for data input
+
   return (
     <form id="regiter" onSubmit={handleSubmit}>
       <input
@@ -74,8 +78,7 @@ function Register() {
       <MainHeaderLogin></MainHeaderLogin>
       {ok}
     </form>
-    
   );
-}//Registration form
+} //Registration form
 
 export default Register;

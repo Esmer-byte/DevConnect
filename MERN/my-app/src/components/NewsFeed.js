@@ -24,7 +24,7 @@ function NewsFeed(props) {
           username={props.user.username}
           currentUser={props.user.id}
           key={newsFeed.indexOf(posts)}
-          postOwnerID = {posts.ownerID}
+          postOwnerID={posts.ownerID}
           number={posts._id}
           hearts={posts.hearts}
           likes={posts.likes}

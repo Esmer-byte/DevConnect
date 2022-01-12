@@ -43,7 +43,8 @@ function Profile() {
                 <Card.Title>Welcome back, {res.data.user.username}!</Card.Title>
                 <Card.Text>
                   You are currently logged in and your user id is{""}
-                  {res.data.user.id}. Your email address is {res.data.user.email}
+                  {res.data.user.id}. Your email address is{" "}
+                  {res.data.user.email}
                 </Card.Text>
                 <Button variant="primary" onClick={doLogout}>
                   Logout
