@@ -44,6 +44,7 @@ function Update() {
               onChange={setEnteredOldPasswordHandler}
               type="password"
               placeholder="Enter your old password"
+              id = "oldpassword"
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -52,9 +53,10 @@ function Update() {
               onChange={setEnteredNewPasswordHandler}
               type="password"
               placeholder="Password"
+              id = "newpassword"
             />
           </Form.Group>
-          <Button variant="primary" type="submit">
+          <Button id = "submitUpdate" variant="primary" type="submit">
             Submit
           </Button>
         </Form>
