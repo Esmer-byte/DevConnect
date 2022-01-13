@@ -46,14 +46,14 @@ function Profile() {
                   {res.data.user.id}. Your email address is{" "}
                   {res.data.user.email}
                 </Card.Text>
-                <Button variant="primary" onClick={doLogout}>
+                <Button id ="logoutButton" variant="primary" onClick={doLogout}>
                   Logout
                 </Button>
-                <Button variant="danger" onClick={doDelete}>
+                <Button id= "deleteButton" variant="danger" onClick={doDelete}>
                   Delete account
                 </Button>
-                <MainUpdateHeader></MainUpdateHeader>
-                <MainHeaderHome></MainHeaderHome>
+                <MainUpdateHeader id = "updateButton"></MainUpdateHeader>
+                <MainHeaderHome id = "homeButton"></MainHeaderHome>
               </Card.Body>
             </Card>
           </div>

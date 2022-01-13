@@ -47,33 +47,37 @@ function Register() {
   } //Handlers for data input
 
   return (
-    <form id="regiter" onSubmit={handleSubmit}>
+    <form id="register" onSubmit={handleSubmit}>
       <input
+        id="usernameRegister"
         type="text"
         onChange={usernameHandler}
         value={enteredUsername}
         placeholder="username"
       ></input>
       <input
+        id="passwordRegister"
         type="password"
         onChange={passwordHandler}
         value={enteredPassword}
         placeholder="password"
       ></input>
       <input
+        id="emailRegister"
         type="email"
         onChange={emailHandler}
         value={enteredEmail}
         placeholder="Email"
       ></input>
       <input
+        id="dateRegister"
         type="date"
         onChange={dateHandler}
         value={enteredDate}
         placeholder="Email"
       ></input>
-      <Button variant="primary" type="submit">
-        submit
+      <Button id = "submitButtonRegister" variant="primary" type="submit">
+        Submit
       </Button>
       <MainHeaderLogin></MainHeaderLogin>
       {ok}

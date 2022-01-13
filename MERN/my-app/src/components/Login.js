@@ -37,20 +37,22 @@ function Login() {
 
   return (
     <div>
-      <form id="register" onSubmit={handleLogin}>
+      <form id="login" onSubmit={handleLogin}>
         <input
+          id = "loginUsername"
           type="text"
           onChange={usernameHandlerLogin}
           value={enteredUsernameLogin}
           placeholder="username"
         ></input>
         <input
+          id = "loginPassword"
           type="password"
           onChange={passwordHandlerLogin}
           value={enteredPasswordLogin}
           placeholder="password"
         ></input>
-        <Button type="submit">Login</Button>
+        <Button id = "submitButtonLogin" type="submit">Login</Button>
       </form>
       <MainHeader />
       {ok}

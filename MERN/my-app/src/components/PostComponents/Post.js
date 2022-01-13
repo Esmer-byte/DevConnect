@@ -108,19 +108,20 @@ function Post(props) {
         </Card.Title>
         <Card.Body>Description: {props.description}</Card.Body>
         <Card.Footer>
-          <Button onClick={postReactionLike} variant="primary">
+          <Button id = "like" onClick={postReactionLike} variant="primary">
             <i className="lar la-thumbs-up">{likes}</i>
           </Button>
-          <Button onClick={postReactionHeart} variant="danger">
+          <Button id = "heart" onClick={postReactionHeart} variant="danger">
             <i className="las la-heart"> {hearts}</i>
           </Button>
-          <Button onClick={postReactionWows} variant="warning">
+          <Button id = "wow" onClick={postReactionWows} variant="warning">
             <i className="lar la-surprise">{wows}</i>
           </Button>
           <Row className="">
             <Col fluid="md-10"></Col>
             <Col md="auto">
               <Button
+                id = "toggle"
                 onClick={toggleComment}
                 className="justify-content-end"
                 variant="info"
@@ -135,6 +136,7 @@ function Post(props) {
                 className="justify-content-end"
                 variant="info"
                 size="sm"
+                id = "show"
               >
                 See all comments
               </Button>
@@ -145,12 +147,13 @@ function Post(props) {
           <div>
             <Form onSubmit={postComment}>
               <Form.Control
+                id = "textareaComment"
                 onChange={changeComment}
                 value={commentValue}
                 as="textarea"
                 placeholder="Leave a comment here"
               />
-              <Button type="submit" variant="success">
+              <Button id = "submitComment" type="submit" variant="success">
                 Submit
               </Button>
             </Form>

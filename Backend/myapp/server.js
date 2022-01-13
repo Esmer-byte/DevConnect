@@ -114,10 +114,10 @@ app.get("/logout", (req, res) => {
 
 //User routes
 app.use("/createUser", require("./Routes/userRoutes.js"));
-app.put("/updateUser", require("./Routes/userRoutes.js"));
-app.get("/deleteUser", require("./Routes/userRoutes.js"));
-app.get("/getUser", require("./Routes/userRoutes.js"));
-app.get("/getPublicUser", require("./Routes/userRoutes.js"));
+app.use("/updateUser", require("./Routes/userRoutes.js"));
+app.use("/deleteUser", require("./Routes/userRoutes.js"));
+app.use("/getUser", require("./Routes/userRoutes.js"));
+app.use("/getPublicUser", require("./Routes/userRoutes.js"));
 
 //Post routes
 app.use("/createPost", require("./Routes/postRoutes.js"));
