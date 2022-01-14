@@ -4,7 +4,7 @@ function MainHomeHeader() {
   return (
     <div>
       <Button  variant = "info" bsPrefix="super-btn">
-        <Link to="/">Home</Link>
+        <Link id = "homeButton" to="/">Home</Link>
       </Button>
     </div>
   );

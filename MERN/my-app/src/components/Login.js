@@ -54,7 +54,7 @@ function Login() {
         ></input>
         <Button id = "submitButtonLogin" type="submit">Login</Button>
       </form>
-      <MainHeader />
+      <MainHeader id = "goRegister" />
       {ok}
     </div>
   );
