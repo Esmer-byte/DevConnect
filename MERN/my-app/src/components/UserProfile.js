@@ -18,6 +18,7 @@ function Profile() {
       setOK(<Redirect to="/" />);
     });
   }
+
   function doDelete() {
     Axios({
       method: "GET",
@@ -27,6 +28,7 @@ function Profile() {
       setOK(<Redirect to="/login" />);
     });
   }
+
   function setData() {
     Axios({
       method: "GET",
@@ -46,14 +48,14 @@ function Profile() {
                   {res.data.user.id}. Your email address is{" "}
                   {res.data.user.email}
                 </Card.Text>
-                <Button id ="logoutButton" variant="primary" onClick={doLogout}>
+                <Button id="logoutButton" variant="primary" onClick={doLogout}>
                   Logout
                 </Button>
-                <Button id= "deleteButton" variant="danger" onClick={doDelete}>
+                <Button id="deleteButton" variant="danger" onClick={doDelete}>
                   Delete account
                 </Button>
-                <MainUpdateHeader id = "updateButton"></MainUpdateHeader>
-                <MainHeaderHome id = "homeButton"></MainHeaderHome>
+                <MainUpdateHeader id="updateButton"></MainUpdateHeader>
+                <MainHeaderHome id="homeButton"></MainHeaderHome>
               </Card.Body>
             </Card>
           </div>

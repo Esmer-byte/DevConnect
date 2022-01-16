@@ -62,4 +62,5 @@ makePost("Testing the testing test")
 driver.get("http://localhost:3001/profile")
 time.sleep(1)
 deleteUser()
+driver.close()
 

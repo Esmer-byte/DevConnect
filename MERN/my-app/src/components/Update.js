@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { Form, Button, Card } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
@@ -34,9 +34,19 @@ function Update() {
     setEnteredNewPassword(event.target.value);
   }
 
-  return (
-    <div>
-      <Card style={{ width: "40rem" }} className="test">
+  function checkData() {
+    Axios({
+      method: "GET",
+      withCredentials: true,
+      url: "http://localhost:3000/",
+    }).then((res) => {
+      if(res.data == "Ne-Logat") {
+        setOk(<div>
+          <Redirect to="/login"></Redirect>
+        </div>)
+      } else {
+        setOk(<div>
+           <Card style={{ width: "40rem" }} className="test">
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Old Password</Form.Label>
@@ -62,6 +72,17 @@ function Update() {
         </Form>
       </Card>
       {ok}
+        </div>)
+      }
+    })
+  }
+  useEffect(() => {
+    checkData();
+  }, []);
+
+  return (
+    <div>
+     {ok}
     </div>
   );
 }
