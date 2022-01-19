@@ -110,6 +110,11 @@ app.get("/getPosts", async (req, res) => {
   const posts = await Postare.find();
   res.status(200).send(posts);
 });
+//Get posts for current user
+app.get("/getPosts/:id", async (req,res)=>{
+  const {id}=req.params;
+  res.send(id);
+})
 
 //Post Comment Route
 app.post("/commentPost", async (req, res) => {
