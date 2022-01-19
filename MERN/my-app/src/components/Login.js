@@ -20,9 +20,10 @@ function Login() {
       withCredentials: true,
       url: "http://localhost:3000/login",
     }).then((res) => {
+      const redirectPath="/profile/"+res.data.sessUser.id;
       setOk(
         <div>
-          <Redirect to="/profile" />
+          <Redirect to={redirectPath} />
         </div>
       );
     });
