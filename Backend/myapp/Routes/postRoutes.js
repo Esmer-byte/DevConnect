@@ -113,7 +113,8 @@ app.get("/getPosts", async (req, res) => {
 //Get posts for current user
 app.get("/getPosts/:id", async (req,res)=>{
   const {id}=req.params;
-  res.send(id);
+  const posts = await Postare.find({ownerID:id});
+  res.status(200).send(posts);
 })
 
 //Post Comment Route

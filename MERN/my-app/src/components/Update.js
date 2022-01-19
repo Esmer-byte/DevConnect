@@ -40,7 +40,7 @@ function Update() {
       withCredentials: true,
       url: "http://localhost:3000/",
     }).then((res) => {
-      if(res.data == "Ne-Logat") {
+      if(res.data === "Ne-Logat") {
         setOk(<div>
           <Redirect to="/login"></Redirect>
         </div>)
