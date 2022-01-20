@@ -80,7 +80,7 @@ app.get("/getUser", async (req, res) => {
   }
 });
 app.post("/getPublicUser", async (req, res) => {
-  const foundUser = await User.findById(req.body.userID);
+  const foundUser = await User.findById(req.body.otherID);
   res.json(foundUser);
 });
 

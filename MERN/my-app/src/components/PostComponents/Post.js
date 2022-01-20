@@ -94,7 +94,7 @@ function Post(props) {
       <Card id="customCard" style={{ width: "40rem" }}>
         <Card.Title>
           <Row className="">
-            <Col fluid="md-10">This post was created by {props.owner} </Col>
+            <Col fluid="md-10">This post was created by <a href={ `/profile/`+ props.postOwnerID}>{props.owner}</a> </Col>
             <Col md="auto">
               <Button
                 className="justify-content-end"
