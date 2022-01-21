@@ -62,6 +62,7 @@ function Post(props) {
     });
   }
   function postComment(event) {
+    console.log(props.username)
     Axios({
       method: "POST",
       data: {
@@ -73,6 +74,7 @@ function Post(props) {
       url: "http://localhost:3000/commentPost",
     });
   }
+
   async function getComment() {
    await Axios({
       method: "POST",

@@ -51,8 +51,7 @@ export default function OtherProfile(props) {
       },
     })
       .then((res) => {
-        console.log(res.data._id);
-        setUserData(res.data._id);
+        setUserData(res.data.user);
         setOK(
           <div>
             <Card style={{ width: "25rem" }}>

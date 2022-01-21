@@ -45,6 +45,7 @@ function Profile() {
         setPostData(
           <div>
             {res.data.map((posts) => {
+              console.log(userData.username)
               return (
                 <Post
                   username={userData.username}
@@ -75,7 +76,7 @@ function Profile() {
     })
       .then((res) => {
         setUserData(res.data.user);
-        if(res.data.user.id == id) {
+        if (res.data.user.id == id) {
           setOK(
             <div>
               <Card style={{ width: "25rem" }}>
@@ -106,10 +107,8 @@ function Profile() {
             </div>
           );
         } else {
-          setOK(<OtherProfile otherID = {id}></OtherProfile>)
+          setOK(<OtherProfile otherID={id}></OtherProfile>);
         }
-          
-        
       })
       .catch((err) => {
         setOK(<Redirect to="/login" />);

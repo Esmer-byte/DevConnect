@@ -119,7 +119,7 @@ app.get("/getPosts/:id", async (req,res)=>{
 
 //Post Comment Route
 app.post("/commentPost", async (req, res) => {
-  console.log(req.body.username);
+  console.log(req.body);
   const comment = new Comment({
     ownerID: req.session.user.id,
     postID: req.body.postID,
