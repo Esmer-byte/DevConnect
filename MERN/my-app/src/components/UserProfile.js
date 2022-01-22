@@ -9,7 +9,7 @@ import "./test.css";
 import MainHeaderHome from "../header/MainHeaderHome";
 import Post from "./PostComponents/Post";
 import MakeNewPost from "./PostComponents/makeNewPost";
-import OtherProfile from "./OtherProfile";
+
 function Profile() {
   const { id } = useParams();
   const [ok, setOK] = useState("<div>Not authorized</div>");
@@ -34,40 +34,6 @@ function Profile() {
       setOK(<Redirect to="/login" />);
     });
   }
-
-  function getPosts() {
-    Axios({
-      method: "GET",
-      withCredentials: true,
-      url: `http://localhost:3000/getPosts/${id}`,
-    })
-      .then((res) => {
-        setPostData(
-          <div>
-            {res.data.map((posts) => {
-              console.log(userData.username)
-              return (
-                <Post
-                  username={userData.username}
-                  currentUser={id}
-                  postOwnerID={posts.ownerID}
-                  number={posts._id}
-                  hearts={posts.hearts}
-                  likes={posts.likes}
-                  wows={posts.wows}
-                  owner={posts.displayName}
-                  description={posts.descriptionBody}
-                />
-              );
-            })}
-          </div>
-        );
-      })
-      .catch((err) => {
-        setPostData(<div>{err}</div>);
-      });
-  }
-
   function setData() {
     Axios({
       method: "GET",
@@ -75,7 +41,6 @@ function Profile() {
       url: `http://localhost:3000/`,
     })
       .then((res) => {
-        setUserData(res.data.user);
         if (res.data.user.id == id) {
           setOK(
             <div>
@@ -104,10 +69,36 @@ function Profile() {
                   <MainHeaderHome id="homeButton"></MainHeaderHome>
                 </Card.Body>
               </Card>
+              <MakeNewPost />
             </div>
           );
         } else {
-          setOK(<OtherProfile otherID={id}></OtherProfile>);
+          Axios({
+            method: "POST",
+            withCredentials: true,
+            url: `http://localhost:3000/getPublicUser`,
+            data: {
+              otherID: id,
+            },
+          })
+            .then((res) => {
+              setUserData(res.data.user);
+              console.log(res.data.user);
+              setOK(
+                <div>
+                  <Card style={{ width: "25rem" }}>
+                    <Card.Img fluid="true" variant="top" src={Harold} />
+                    <Card.Body>
+                      <Card.Title>{res.data.username}!</Card.Title>
+                      <Card.Text>This is another user profile</Card.Text>
+                    </Card.Body>
+                  </Card>
+                </div>
+              );
+            })
+            .catch((err) => {
+              setOK(<Redirect to="/login" />);
+            });
         }
       })
       .catch((err) => {
@@ -120,14 +111,51 @@ function Profile() {
     getPosts();
   }, []);
 
+  function getPosts() {
+    Axios({
+      method: "GET",
+      withCredentials: true,
+      url: `http://localhost:3000/`,
+    }).then((res) => {console.log(res.data.user.username)})
+    
+    Axios({
+      method: "GET",
+      withCredentials: true,
+      url: `http://localhost:3000/getPosts/${id}`,
+    })
+      .then((res) => {
+        setPostData(
+          <div>
+            {res.data.map((posts) => {
+              return (
+                <Post
+                  key={res.data.indexOf(posts)}
+                  username={res.username}
+                  currentUser={id}
+                  postOwnerID={posts.ownerID}
+                  number={posts._id}
+                  hearts={posts.hearts}
+                  likes={posts.likes}
+                  wows={posts.wows}
+                  owner={posts.displayName}
+                  description={posts.descriptionBody}
+                />
+              );
+            })}
+          </div>
+        );
+      })
+      .catch((err) => {
+        setPostData(<div>{err}</div>);
+      });
+  }
+
+  
   return (
     <div>
       <Row>
         <Col>{ok}</Col>
-        <Col>
-          <MakeNewPost />
-          {postData}
-        </Col>
+        <Col>{postData}</Col>
       </Row>
     </div>
   );

@@ -62,7 +62,7 @@ function Post(props) {
     });
   }
   function postComment(event) {
-    console.log(props.username)
+    console.log(props)
     Axios({
       method: "POST",
       data: {
