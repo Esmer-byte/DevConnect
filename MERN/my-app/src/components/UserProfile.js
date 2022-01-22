@@ -13,7 +13,6 @@ import MakeNewPost from "./PostComponents/makeNewPost";
 function Profile() {
   const { id } = useParams();
   const [ok, setOK] = useState("<div>Not authorized</div>");
-  const [userData, setUserData] = useState({});
   const [postData, setPostData] = useState("No Posts to show!");
   function doLogout() {
     Axios({
@@ -81,9 +80,7 @@ function Profile() {
               otherID: id,
             },
           })
-            .then((res) => {
-              setUserData(res.data.user);
-              console.log(res.data.user);
+            .then((res) => {              
               setOK(
                 <div>
                   <Card style={{ width: "25rem" }}>
@@ -111,13 +108,7 @@ function Profile() {
     getPosts();
   }, []);
 
-  function getPosts() {
-    Axios({
-      method: "GET",
-      withCredentials: true,
-      url: `http://localhost:3000/`,
-    }).then((res) => {console.log(res.data.user.username)})
-    
+  function getPosts() { 
     Axios({
       method: "GET",
       withCredentials: true,

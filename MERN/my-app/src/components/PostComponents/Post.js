@@ -13,6 +13,15 @@ function Post(props) {
   const [commentValue, setCommentValue] = useState();
   const [comments, setComments] = useState([]);
   const [isShowing, setShowing] = useState(false);
+  const [current, setCurrent] = useState();
+  useEffect(() => {
+    Axios({
+      method: "GET",
+      withCredentials: true,
+      url: `http://localhost:3000/`,
+    }).then((response) => {setCurrent(response.data.user.username)})
+  }, []);
+  
 
   //Frontend functions
 
@@ -62,13 +71,12 @@ function Post(props) {
     });
   }
   function postComment(event) {
-    console.log(props)
     Axios({
       method: "POST",
       data: {
         text: commentValue,
         postID: props.number,
-        username: props.username,
+        username: current,
       },
       withCredentials: true,
       url: "http://localhost:3000/commentPost",
