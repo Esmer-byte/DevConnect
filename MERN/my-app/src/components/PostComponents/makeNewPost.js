@@ -21,10 +21,9 @@ function MakeNewPost() {
     <Card style={{ width: "40rem"}}>
       <Form onSubmit={setDescriptionHandler}>
         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-          <Form.Label>Example textarea</Form.Label>
-          <Form.Control onChange = {changeDescription} value={description} as="textarea" rows={3} />
+          <Form.Control id = "textareaPost" onChange = {changeDescription} value={description} as="textarea" rows={3} />
         </Form.Group>
-        <Button variant = "primary" type="submit">Submit</Button>
+        <Button id ="createPost" variant = "primary" type="submit">Submit</Button>
       </Form>
       </Card>
     </div>

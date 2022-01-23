@@ -3,78 +3,101 @@ const mongoose = require("mongoose");
 //Schemas
 
 //User Schema
-const userSchema=new mongoose.Schema({
-  username:{
-      type:String,
-      required:true,
-      unique:true,
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
   },
-  password:{
-      type:String,
-      required:true,
+  password: {
+    type: String,
+    required: true,
   },
-  email:{
-      type:String,
-      required:true,
-      unique:true
+  email: {
+    type: String,
+    required: true,
+    unique: true,
   },
-  date:{
-      type:Date,
-      required:true,
+  date: {
+    type: Date,
+    required: true,
   },
-  posts:{
-      type:Array,
+  posts: {
+    type: Array,
   },
-  friends:{
-      type:Array,
+  friends: {
+    type: Array,
   },
-  about:{
-      type:String,
+  about: {
+    type: String,
   },
-  role:{
-      type:String,
-      required:true,
+  role: {
+    type: String,
+    required: true,
   },
-  profileImage:{
-      type:String,
-  }
+  profileImage: {
+    type: String,
+  },
 });
 
 //Post Schema
-const postSchema=new mongoose.Schema({
-  ownerID:{
-      type:String,
-      required:true,
+const postSchema = new mongoose.Schema({
+  ownerID: {
+    type: String,
+    required: true,
   },
-  previewURL:{
-      type:String,
+  previewURL: {
+    type: String,
   },
-  descriptionBody:{
-      type:String,
+  displayName: {
+    type: String,
+    required: true,
   },
-  reactions:{
-      type:Array,
-      likes:{
-          type:String,
-      },
-      hearts:{
-          type:String,
-      },
-      wows:{
-          type:String,
-      }
+  descriptionBody: {
+    type: String,
   },
-  date:{
-    type:Date,
-    required:true,
-}
+  likes: {
+    type: [String],
+  },
+  hearts: {
+    type: [String],
+  },
+  wows: {
+    type: [String],
+  },
+  date: {
+    type: Date,
+    required: true,
+  },
+});
+
+//Comment schema
+const commentSchema = new mongoose.Schema({
+  ownerID: {
+    type: String,
+    required: true,
+  },
+  postID: {
+      type: String,
+      required: true,
+  },
+  commentContent: {
+      type: String,
+      required: true,
+  },
+  ownerUsername: {
+    type: String,
+    required: true,
+  }
+
 });
 
 //End of Schemas
 
 //Export Variables
 const User = mongoose.model("User", userSchema);
-const Postare=mongoose.model('Postare',postSchema);
+const Postare = mongoose.model("Postare", postSchema);
+const Comment = mongoose.model("Comment", commentSchema);
 //End of export variables
 
-module.exports = { User, Postare}; //Exports
+module.exports = { User, Postare, Comment }; //Exports

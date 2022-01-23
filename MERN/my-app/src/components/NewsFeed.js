@@ -4,7 +4,7 @@ import Post from "./PostComponents/Post";
 
 function NewsFeed(props) {
   const [newsFeed, setNewsfeed] = useState([]);
-  function test() {
+  function getPosts() {
     Axios({
       method: "GET",
       withCredentials: true,
@@ -15,20 +15,21 @@ function NewsFeed(props) {
   }
 
   useEffect(() => {
-    test();
+    getPosts();
   }, []);
   return (
     <div>
       {newsFeed.map((posts) => (
-        
         <Post
-          currentUser = {props.user}
+          username={props.user.username}
+          currentUser={props.user.id}
           key={newsFeed.indexOf(posts)}
+          postOwnerID={posts.ownerID}
           number={posts._id}
-          hearts={posts.reactions[0].hearts}
-          likes={posts.reactions[0].likes}
-          wows={posts.reactions[0].wows}
-          owner={posts.ownerID}
+          hearts={posts.hearts}
+          likes={posts.likes}
+          wows={posts.wows}
+          owner={posts.displayName}
           description={posts.descriptionBody}
         />
       ))}

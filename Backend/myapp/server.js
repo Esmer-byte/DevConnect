@@ -10,7 +10,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
-const { User, Postare } = require("./schemadefinition");
+const { User, Postare, Comment } = require("./schemadefinition");
 //End of requirements
 
 //Global variables
@@ -38,7 +38,6 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-// End of establish connection with the Database
 
 // Cookie Settings
 app.use(
@@ -56,21 +55,20 @@ app.use(
   })
 );
 app.use(cookieParser("secretcode"));
-// End of Cookie Settings
-
-app.use(express.json()); //Express settings
-app.use(express.urlencoded({ extended: true })); //Express settings
-
+//Express settings
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+//Cors Settings
 app.use(
   cors({
     origin: "http://localhost:3001", // <-- location of the react app were connecting to
     credentials: true,
   })
-); // Cors Settings
-
-app.use(passport.initialize()); // Passport settings
-app.use(passport.session()); // Passport settings
-
+);
+//Passport settings
+app.use(passport.initialize());
+app.use(passport.session());
+//Protected routing
 function Authentication(sessUser) {
   if (sessUser) {
     return true;
@@ -80,9 +78,8 @@ function Authentication(sessUser) {
 }
 //---------------------------------------------------------------END OF MIDDLEWARE---------------------------------------------------------------------//
 
-//Routes
-
-//================================================================USER ROUTES================================================================
+//----------------------------------------------------------------Routes-------------------------------------------------------------------------------//
+//Login route
 app.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) throw err;
@@ -105,7 +102,7 @@ app.post("/login", (req, res, next) => {
     }
   })(req, res, next);
 }); // Route for Login
-
+//Logout route
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     //delete session data from store, using sessionID in cookie
@@ -115,120 +112,23 @@ app.get("/logout", (req, res) => {
   });
 }); //Logout
 
-//Delete route
-app.get("/deleteUser", async (req, res) => {
-  const id = req.session.user.id;
-  User.findOneAndRemove({ _id: id }, function (err, result) {
-    if (err) throw err;
-    req.session.destroy();
-    res.clearCookie("USERCOOKIE");
-    res.redirect("/");
-  });
-});
+//User routes
+app.use("/createUser", require("./Routes/userRoutes.js"));
+app.use("/updateUser", require("./Routes/userRoutes.js"));
+app.use("/deleteUser", require("./Routes/userRoutes.js"));
+app.use("/getUser", require("./Routes/userRoutes.js"));
+app.use("/getPublicUser", require("./Routes/userRoutes.js"));
 
-//Update route
-app.put("/updateUser", async (req, res) => {
-  const pass = req.body.oldpassword;
-  const userToUpdate = await User.findOne({ _id: req.session.user.id });
-  bcrypt.compare(pass, userToUpdate.password, async (err, result) => {
-    var Result = result;
-    if (err) throw err;
-    if (Result == true) {
-      const hashedPassword = await bcrypt.hash(req.body.newpassword, 10);
-      await User.findByIdAndUpdate(
-        { _id: req.session.user.id },
-        { password: hashedPassword }
-      );
-      req.session.destroy();
-      res.send("Password was changed successfully");
-    } else {
-      res.send("Does not match");
-    }
-  });
-});
+//Post routes
+app.use("/createPost", require("./Routes/postRoutes.js"));
+app.use("/updatePost", require("./Routes/postRoutes.js"));
+app.use("/deletePost", require("./Routes/postRoutes.js"));
+app.use("/getPosts", require("./Routes/postRoutes.js"));
 
-//User registration route
-app.post("/createUser", (req, res) => {
-  User.findOne({ username: req.body.username }, async (err, doc) => {
-    if (err) throw err;
-    if (doc) res.send("User Already Exists");
-    if (!doc) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10); //password encryption
-      const newUser = new User({
-        username: req.body.username, //taking the username that has been introduced in the frontend form
-        password: hashedPassword,
-        email: req.body.email,
-        date: req.body.date,
-        role: "Slave",
-      });
-      await newUser.save(); //introducing the user into the database
-      res.send("User Created");
-    }
-  });
-}); //User registration route
-app.get("/getUser", async (req, res) => {
-  if (Authentication(req.session.user)) {
-    const user = await User.findById(req.session.user.id);
-    console.log(user);
-    res.json({
-      username: user.username,
-      id: user.id,
-      email: user.email,
-      date: user.date,
-    });
-  }
-});
-//============================================================================END OF USER ROUTES=====================================================================
-
-//============================================================================POST ROUTES============================================================================
-
-//Create Post
-app.post("/createPost", async (req, res, next) => {
-  const date = new Date();
-  const postare = new Postare({
-    ownerID: req.session.user.username,
-    previewURL: "",
-    descriptionBody: req.body.description,
-    reactions: {
-      likes: [],
-      hearts: [],
-      wows: [],
-    },
-    date: date,
-  });
-  await postare.save();
-  res.send("post created");
-});
-
-//Update Post
-app.put("/updatePost", async (req, res, next) => {
-  console.log(req.body);
-  switch (req.body.reaction) {
-    case 1:
-      Postare.findOneAndUpdate({ownerID:req.body.postOwner}, {
-        $push: { reactions: { likes: req.body.owner } },
-      });
-      break;
-    case 2:
-      Postare.findOneAndUpdate({ownerID:req.body.postOwner}, {
-        $push: { reactions: { hearts: req.body.owner } },
-      });
-      break;
-    case 3:
-      Postare.findOneAndUpdate({ownerID:req.body.postOwner}, {
-        $push: { reactions: { wows: req.body.owner } },
-      });
-      break;
-  }
-
-});
-
-//Get Posts Route
-app.get("/getPosts", async (req, res) => {
-  const posts = await Postare.find();
-  res.status(200).send(posts);
-});
-//================================================================END OF POST ROUTES===================================================================
+//Comment routes
+app.use("/commentPost", require("./Routes/postRoutes.js"));
+app.use("/getComment", require("./Routes/postRoutes.js"));
+app.use("/deleteComment", require("./Routes/postRoutes.js"));
 
 //Protected Home page
 app.get("/", async (req, res) => {
@@ -237,7 +137,9 @@ app.get("/", async (req, res) => {
   } else {
     res.send("Ne-Logat");
   }
-}); //Protected Home page
+});
 
-app.listen(port, () => console.log(`Example running on port ${port}`));
-//----------------------------------------------------------------End of Routes----------------------------------------------------------------
+
+
+app.listen(port, () => console.log(`Application running on port ${port}`));
+//----------------------------------------------------------------End of Routes------------------------------------------------------------------------//
