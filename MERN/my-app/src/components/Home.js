@@ -7,7 +7,7 @@ import MakeNewPost from "./PostComponents/makeNewPost";
 
 function Home() {
   const [ok, setOK] = useState("<div>Not authorized</div>");
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState("");//test
 
   function setAuth() {
     Axios({
